@@ -8,7 +8,7 @@ const { hashToken } = require("../../utils/hashToken");
  * @returns
  */
 const findByEmail = async (email) => {
-  return await db.admin.findUnique({
+  return await db.user.findUnique({
     where: {
       email,
     },
@@ -16,24 +16,24 @@ const findByEmail = async (email) => {
 };
 
 /**
- * mandatory asign param data admin
- * @param {*} admin
+ * mandatory asign param data user
+ * @param {*} user
  * @returns
  */
-const insertAdmin = async (admin) => {
-  admin.password = bcrypt.hashSync(admin.password, 12);
-  return await db.admin.create({
-    data: admin,
+const insertUser = async (user) => {
+  user.password = bcrypt.hashSync(user.password, 12);
+  return await db.user.create({
+    data: user,
   });
 };
 
 /**
- * mandatory asign param id from admin data
+ * mandatory asign param id from user data
  * @param {*} id
  * @returns
  */
 const findById = async (id) => {
-  return await db.admin.findUnique({
+  return await db.user.findUnique({
     where: {
       id,
     },
@@ -41,16 +41,16 @@ const findById = async (id) => {
 };
 
 /**
- * used when admin create a refresh token
+ * used when user create a refresh token
  * @param {}
  * @returns
  */
-const addRefreshTokenToWhiteList = async (jti, refreshToken, adminId) => {
+const addRefreshTokenToWhiteList = async (jti, refreshToken, userId) => {
   return await db.refreshToken.create({
     data: {
       id: jti,
       hashedToken: hashToken(refreshToken),
-      adminId,
+      userId,
     },
   });
 };
@@ -85,14 +85,14 @@ const deleteRefreshToken = async (id) => {
 };
 
 /**
- * revoked all refreshToken based on admin ID
- * @param {*} adminId
+ * revoked all refreshToken based on user ID
+ * @param {*} userId
  * @returns
  */
-const revokeTokens = async (adminId) => {
+const revokeTokens = async (userId) => {
   return await db.refreshToken.updateMany({
     where: {
-      adminId,
+      userId,
     },
     data: {
       revoked: true,
@@ -102,7 +102,7 @@ const revokeTokens = async (adminId) => {
 
 module.exports = {
   findByEmail,
-  insertAdmin,
+  insertUser,
   findById,
   addRefreshTokenToWhiteList,
   findRefreshTokenById,

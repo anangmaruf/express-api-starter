@@ -10,13 +10,13 @@ const {
 } = require("./auth.repository");
 
 const findUserByEmail = async (email) => {
-  const admin = await findByEmail(email);
-  return admin;
+  const user = await findByEmail(email);
+  return user;
 };
 
 const findUserById = async (id) => {
-  const admin = await findById(id);
-  return admin;
+  const user = await findById(id);
+  return user;
 };
 
 const postUser = async (data) => {
@@ -25,8 +25,8 @@ const postUser = async (data) => {
 };
 
 const postAddRefreshTokenToWhiteList = async (tokens) => {
-  const { jti, refreshToken, adminId } = tokens;
-  const response = await addRefreshTokenToWhiteList(jti, refreshToken, adminId);
+  const { jti, refreshToken, userId } = tokens;
+  const response = await addRefreshTokenToWhiteList(jti, refreshToken, userId);
   return response;
 };
 

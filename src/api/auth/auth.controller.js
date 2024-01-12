@@ -6,17 +6,18 @@ const {
   generateTokens,
   helper,
   hashToken,
+  checkIfExistWithStatus,
 } = require("../../utils");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 const {
-  findAdminByEmail,
-  postAdmin,
+  findUserByEmail,
+  postUser,
   postAddRefreshTokenToWhiteList,
   getFindRefreshTokenById,
   removeRefreshToken,
-  findAdminById,
+  findUserById,
   revokeAllRefreshToken,
 } = require("./auth.services");
 const {
@@ -39,19 +40,19 @@ router.post(
     try {
       const { name, email, password } = req.body;
 
-      const existingAdmin = await findAdminByEmail(email);
+      const existingUser = await findUserByEmail(email);
       /**
        * Check if Existing email address
        */
-      checkIfExistWithStatus(existingAdmin, res, 400, "Email already in use.");
+      checkIfExistWithStatus(existingUser, res, 400, "Email already in use.");
 
-      const admin = await postAdmin({ name, email, password });
+      const user = await postUser({ name, email, password });
       const jti = uuidv4();
-      const { accessToken, refreshToken } = generateTokens(admin, jti);
+      const { accessToken, refreshToken } = generateTokens(user, jti);
       await postAddRefreshTokenToWhiteList({
         jti,
         refreshToken,
-        adminId: admin.id,
+        userId: user.id,
       });
 
       res.json({
@@ -70,12 +71,12 @@ router.post(
   async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      const existingAdmin = await findAdminByEmail(email);
+      const existingUser = await findUserByEmail(email);
       /**
        * Check if Existing email address
        */
       checkIfExistWithStatus(
-        !existingAdmin,
+        !existingUser,
         res,
         403,
         "Invalid login credentials."
@@ -83,7 +84,7 @@ router.post(
 
       const validPassword = await bcrypt.compare(
         password,
-        existingAdmin.password
+        existingUser.password
       );
 
       if (!validPassword) {
@@ -92,11 +93,11 @@ router.post(
       }
 
       const jti = uuidv4();
-      const { accessToken, refreshToken } = generateTokens(existingAdmin, jti);
+      const { accessToken, refreshToken } = generateTokens(existingUser, jti);
       await postAddRefreshTokenToWhiteList({
         jti,
         refreshToken,
-        adminId: existingAdmin.id,
+        userId: existingUser.id,
       });
 
       res.json({
@@ -140,7 +141,7 @@ router.post(
         "Unauthorized"
       );
 
-      const admin = await findAdminById(payoload.adminId);
+      const user = await findUserById(payoload.userId);
       /**
        * Check if token match with hashedToken
        */
@@ -155,13 +156,13 @@ router.post(
       const jti = uuidv4();
 
       const { accessToken, refreshToken: newRefreshToken } = generateTokens(
-        admin,
+        user,
         jti
       );
       await postAddRefreshTokenToWhiteList({
         jti,
         refreshToken: newRefreshToken,
-        adminId: admin.id,
+        userId: user.id,
       });
 
       res.json({
@@ -176,9 +177,9 @@ router.post(
 
 router.post("/revokeRefreshTokens", async (req, res, next) => {
   try {
-    const { adminId } = req.body;
-    await revokeAllRefreshToken(adminId);
-    res.json({ message: `Tokens revoked for admin with id ${adminId}` });
+    const { userId } = req.body;
+    await revokeAllRefreshToken(userId);
+    res.json({ message: `Tokens revoked for user with id ${userId}` });
   } catch (error) {
     next(error);
   }

@@ -6,7 +6,7 @@ const { db } = require("../../utils");
  * @returns
  */
 const findByEmail = async (email) => {
-  return await db.admin.findUnique({
+  return await db.user.findUnique({
     where: {
       email,
     },
@@ -14,24 +14,24 @@ const findByEmail = async (email) => {
 };
 
 /**
- * mandatory asign param data admin
- * @param {*} admin
+ * mandatory asign param data user
+ * @param {*} user
  * @returns
  */
-const insertAdmin = async (admin) => {
-  admin.password = bcrypt.hashSync(admin.password, 12);
-  return await db.admin.create({
-    data: admin,
+const insertUser = async (user) => {
+  user.password = bcrypt.hashSync(user.password, 12);
+  return await db.user.create({
+    data: user,
   });
 };
 
 /**
- * mandatory asign param id from admin data
+ * mandatory asign param id from user data
  * @param {*} id
  * @returns
  */
 const findById = async (id) => {
-  return await db.admin.findUnique({
+  return await db.user.findUnique({
     where: {
       id,
     },
