@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { checkIfExistWithStatus } = require("../utils");
 
-function isAuthenticated(req, res, next) {
+function isAuthenticated(req, res) {
   const { authorization } = req.headers;
 
   checkIfExistWithStatus(!authorization, res, 401, "Un-Authorized");

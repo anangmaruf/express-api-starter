@@ -1,4 +1,3 @@
-const { hashToken, db } = require("../../utils");
 const {
   findByEmail,
   insertUser,

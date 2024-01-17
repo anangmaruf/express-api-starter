@@ -1,6 +1,3 @@
-const { query } = require("express");
-const yup = require("yup");
-
 const registerValidate = (schema) => async (req, res, next) => {
   try {
     await schema.validate({

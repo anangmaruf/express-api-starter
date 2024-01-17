@@ -42,8 +42,10 @@ const findById = async (id) => {
 
 /**
  * used when user create a refresh token
- * @param {}
  * @returns
+ * @param jti
+ * @param refreshToken
+ * @param userId
  */
 const addRefreshTokenToWhiteList = async (jti, refreshToken, userId) => {
   return await db.refreshToken.create({

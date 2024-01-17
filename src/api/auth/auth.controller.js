@@ -1,10 +1,6 @@
 const express = require("express");
 const {
-  db,
-  generateAccessToken,
-  generateRefreshToken,
   generateTokens,
-  helper,
   hashToken,
   checkIfExistWithStatus,
 } = require("../../utils");
