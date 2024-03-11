@@ -7,9 +7,7 @@ const cors = require("cors");
 
 const app = express();
 
-const api = require("./api");
 const bodyParser = require("body-parser");
-
 app.use(morgan("dev"));
 app.use(cors());
 app.use(cookieParser());
@@ -19,12 +17,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 dotenv.config();
 
+const routes = require("../routes");
+
 app.get("/", (req, res) => {
   res.json({
     message: "welcome to my API",
   });
 });
 
-app.use("/api/v1", api);
+app.use("/api/v1", routes);
 
 module.exports = app;

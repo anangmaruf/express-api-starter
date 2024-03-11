@@ -1,9 +1,10 @@
 const bcrypt = require("bcrypt");
 const { db } = require("../../utils");
 const { hashToken } = require("../../utils/hashToken");
+const {returnValue} = require("../../utils/helper");
 
 /**
- * mandatory asign param email
+ * mandatory assign param email
  * @param {*} email
  * @returns
  */
@@ -16,7 +17,7 @@ const findByEmail = async (email) => {
 };
 
 /**
- * mandatory asign param data user
+ * mandatory assign param data user
  * @param {*} user
  * @returns
  */
@@ -28,7 +29,7 @@ const insertUser = async (user) => {
 };
 
 /**
- * mandatory asign param id from user data
+ * mandatory assign param id from user data
  * @param {*} id
  * @returns
  */

@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex"]
 }
 
 datasource db {
@@ -11,27 +9,91 @@ datasource db {
 }
 
 model User {
-  id            String  @id @unique @default(uuid())
-  name          String? @db.VarChar(255)
-  username      String? @db.VarChar(255)
-  gender        String? @db.VarChar(255)
-  email         String @unique
+  id            String         @id @unique @default(uuid())
+  name          String?        @db.VarChar(255)
+  username      String?        @db.VarChar(255)
+  gender        String?        @db.VarChar(255)
+  email         String         @unique
   password      String
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  deleted_at    DateTime?
+  deleted       Boolean        @default(false)
+  posts         Post[]
   refreshTokens RefreshToken[]
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
 
-  @@map(name: "users")
+  @@map("users")
+}
+
+model Post {
+  id            String    @id @unique @default(uuid())
+  title         String    @db.MediumText
+  slug          String    @db.MediumText
+  read_duration String    @db.VarChar(255)
+  content       String?   @db.Text
+  image         String?
+  authorId      String
+  published_at  DateTime  @default(now())
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  deleted_at    DateTime?
+  deleted       Boolean   @default(false)
+  author        User      @relation(fields: [authorId], references: [id])
+
+  @@index([slug(length: 300), id])
+  @@index([authorId], map: "posts_authorId_fkey")
+  @@fulltext([content])
+  @@map("posts")
+}
+
+model Category {
+  id         String    @id @unique @default(uuid())
+  title      String    @db.VarChar(255)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  deleted    Boolean   @default(false)
+
+  @@map("categories")
+}
+
+model Tags {
+  id         String    @id @unique @default(uuid())
+  slug       String    @db.VarChar(255)
+  title      String    @db.VarChar(255)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  deleted    Boolean   @default(false)
+
+  @@index([title, slug, id])
+  @@map("tags")
+}
+
+model Media {
+  id         String    @id @unique @default(uuid())
+  title      String    @db.VarChar(255)
+  mime_type  String    @db.VarChar(255)
+  size       BigInt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  deleted    Boolean   @default(false)
+
+  @@map("medias")
 }
 
 model RefreshToken {
-  id          String   @id @unique @default(uuid())
+  id          String    @id @unique @default(uuid())
   hashedToken String
-  userId     String
-  User       User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  revoked     Boolean @default(false)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  userId      String
+  revoked     Boolean   @default(false)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+  deleted     Boolean   @default(false)
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId], map: "refresh_tokens_userId_fkey")
   @@map("refresh_tokens")
 }

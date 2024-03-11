@@ -1,34 +1,25 @@
-# Express JWT authentication using Prisma
+<h1>ExpressJs Api Starter Kit</h1>
 
-## Pre Requisite
+<h2>Features</h2>
 
-```
-1. Node >= 18.17
-2. Prisma ORM
-3. MySQL
-```
+<ul>
+	<li><strong>Post:</strong> Create, update, delete, and find data post (ex: for blog)</li>
+  	<li><strong>Authentication:</strong> JWT Auth</li>
+</ul>
 
-## Setup
+<h2>Technical Stack</h2>
 
-```
-npm install
-npx prisma migrate deploy
-```
+<h3>Backend</h3>
 
-## Lint
+<ul>
+	<li><strong>Language:</strong> Javascript</li>
+	<li><strong>Framework:</strong> Express.js</li>
+	<li><strong>Cache:</strong> Redis</li>
+	<li><strong>ORM:</strong> Prisma</li>
+	<li><strong>Database:</strong> MySql</li>
+</ul>
 
-```
-npm run lint
-```
 
-## Test
+<h2>Credits</h2>
 
-```
-npm run test
-```
-
-## Development
-
-```
-npm run dev
-```
+<p>Finds is built and maintained solely by Anang Ma'ruf. Special thanks to the developers of the libraries and frameworks used in this project.</p>
