@@ -6,7 +6,9 @@ const {
   generateRefreshToken,
   generateTokens,
 } = require("./jwt.user");
-const { checkIfExistWithStatus} = require("./helper");
+const {
+  checkIfExistWithStatus,
+  responseJson} = require("./helper");
 
 module.exports = {
   db,
@@ -15,5 +17,6 @@ module.exports = {
   generateRefreshToken,
   generateTokens,
   checkIfExistWithStatus,
-  setDataCache
+  setDataCache,
+  responseJson
 };

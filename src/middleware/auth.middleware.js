@@ -1,15 +1,18 @@
 const jwt = require("jsonwebtoken");
 const { checkIfExistWithStatus } = require("../utils");
 
-function isAuthenticated(req, res) {
+function isAuthenticated(req, res, next) {
   const { authorization } = req.headers;
 
-  checkIfExistWithStatus(!authorization, res, 401, "Un-Authorized");
+  if (!authorization) {
+    res.status(401);
+    throw new Error('🚫 Un-Authorized 🚫');
+  }
 
   try {
     const token = authorization.split(" ")[1];
-    const payoload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-    req.payoload = payoload;
+    const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    req.payload = payload;
   } catch (error) {
     res.status(401);
     if (error.name === "TokenExpiredError") {
@@ -17,6 +20,7 @@ function isAuthenticated(req, res) {
     }
     throw new Error("Un-Authorized");
   }
+  return next();
 }
 
 module.exports = { isAuthenticated };

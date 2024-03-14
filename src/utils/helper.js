@@ -8,6 +8,13 @@ const checkIfExistWithStatus = (data, res, codeStatus, message) => {
   }
 };
 
+const responseJson = (res, data) => {
+  res.json({
+    ...data
+  })
+}
+
 module.exports = {
   checkIfExistWithStatus,
+  responseJson
 };
