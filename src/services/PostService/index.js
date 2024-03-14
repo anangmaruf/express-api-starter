@@ -1,4 +1,4 @@
-const {findMany, insertPost, findById, softDelete} = require("../../repositories/post.repository");
+const {findMany, insertPost, findById, softDelete, restore} = require("../../repositories/post.repository");
 const {environtment} = require("../../constants");
 const {setDataCache, responseJson} = require("../../utils");
 const {getDataCache} = require("../../utils/cache");
@@ -24,14 +24,15 @@ const createPost = async (data) => {
 }
 
 const getById = async (id) => {
-    const dataCache = await getDataCache(`${prefixCache}-${id}`);
+    const param = id;
+    const dataCache = await getDataCache(`${prefixCache}-${param.id}`);
     if (dataCache === null) {
         const post = await findById(id);
         /**
          * set data cache
          * params (key, data)
          */
-        await setDataCache(`${prefixCache}-${id}`, post);
+        await setDataCache(`${prefixCache}-${post.id}`, post);
         return post;
     } else {
         return dataCache;
@@ -39,12 +40,33 @@ const getById = async (id) => {
 }
 
 const softDeleteById = async (id) => {
-    return await softDelete(id);
+    const data = await getById(id);
+    switch (data.deleted_at) {
+        case null:
+            const post = await softDelete(id);
+            /**
+             * set data cache
+             * params (key, data)
+             */
+            await setDataCache(`${prefixCache}-${post.id}`, post);
+            return post;
+            break;
+        default:
+            return false;
+            break;
+    }
+}
+
+const restoreById = async (id) => {
+    const post = await restore(id);
+    await setDataCache(`${prefixCache}-${post.id}`, post);
+    return post;
 }
 
 module.exports = {
     paginate,
     createPost,
     getById,
-    softDelete
+    softDeleteById,
+    restoreById,
 }

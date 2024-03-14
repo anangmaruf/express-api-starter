@@ -20,7 +20,10 @@ const insertPost = async (post) => {
 
 const findById = async (id) => {
     return await db.post.findUnique({
-        where: id
+        where: {
+            ...id,
+            deleted_at: null
+        }
     });
 }
 
@@ -34,9 +37,20 @@ const softDelete = async (id) => {
     });
 }
 
+const restore = async (id) => {
+    return await db.post.update({
+        where: id,
+        data: {
+            deleted_at: null,
+            deleted: false
+        }
+    });
+}
+
 module.exports = {
     findMany,
     insertPost,
     findById,
-    softDelete
+    softDelete,
+    restore
 }
