@@ -1,7 +1,4 @@
-const bcrypt = require("bcrypt");
 const { db } = require("../utils");
-const { hashToken } = require("../utils/hashToken");
-const {returnValue} = require("../utils/helper");
 
 /**
  * mandatory assign param email
@@ -9,17 +6,17 @@ const {returnValue} = require("../utils/helper");
  * @returns
  */
 const findMany = async (data) => {
-    return await db.post.findMany(...data);
+    return db.post.findMany(data);
 }
 
 const insertPost = async (post) => {
-    return await db.post.create({
+    return db.post.create({
         data: post
     });
 }
 
 const findById = async (id) => {
-    return await db.post.findUnique({
+    return db.post.findUnique({
         where: {
             ...id,
             deleted_at: null
@@ -28,7 +25,7 @@ const findById = async (id) => {
 }
 
 const softDelete = async (id) => {
-    return await db.post.update({
+    return db.post.update({
         where: id,
         data: {
             deleted_at: new Date(),
@@ -38,11 +35,19 @@ const softDelete = async (id) => {
 }
 
 const restore = async (id) => {
-    return await db.post.update({
+    return db.post.update({
         where: id,
         data: {
             deleted_at: null,
             deleted: false
+        }
+    });
+}
+
+const forceDelete = async (id) => {
+    return db.post.delete({
+        where: {
+            id: id
         }
     });
 }
@@ -52,5 +57,6 @@ module.exports = {
     insertPost,
     findById,
     softDelete,
-    restore
+    restore,
+    forceDelete
 }

@@ -1,7 +1,7 @@
-const {findMany, insertPost, findById, softDelete, restore} = require("../../repositories/post.repository");
+const {findMany, insertPost, findById, softDelete, restore, forceDelete} = require("../../repositories/post.repository");
 const {environtment} = require("../../constants");
-const {setDataCache, responseJson} = require("../../utils");
-const {getDataCache} = require("../../utils/cache");
+const {setDataCache, getDataCache, removeDataCache} = require("../../utils");
+const {} = require("../../utils/cache");
 
 const prefixCache = `${environtment.APP_NAME}-POST`;
 const paginate = async (limit, skip, data) => {
@@ -24,8 +24,7 @@ const createPost = async (data) => {
 }
 
 const getById = async (id) => {
-    const param = id;
-    const dataCache = await getDataCache(`${prefixCache}-${param.id}`);
+    const dataCache = await getDataCache(`${prefixCache}-${id.id}`);
     if (dataCache === null) {
         const post = await findById(id);
         /**
@@ -41,26 +40,27 @@ const getById = async (id) => {
 
 const softDeleteById = async (id) => {
     const data = await getById(id);
-    switch (data.deleted_at) {
-        case null:
-            const post = await softDelete(id);
-            /**
-             * set data cache
-             * params (key, data)
-             */
-            await setDataCache(`${prefixCache}-${post.id}`, post);
-            return post;
-            break;
-        default:
-            return false;
-            break;
+    if (data.deleted_at === null) {
+        const post = await softDelete(id);
+        /**
+         * set data cache
+         * params (key, data)
+         */
+        await setDataCache(`${prefixCache}-${id.id}`, post);
+        return post;
     }
+    return false;
 }
 
 const restoreById = async (id) => {
     const post = await restore(id);
-    await setDataCache(`${prefixCache}-${post.id}`, post);
+    await setDataCache(`${prefixCache}-${id.id}`, post);
     return post;
+}
+
+const deleteById = async (id) => {
+    const post = await forceDelete(id);
+    await removeDataCache(`${prefixCache}-${id}`);
 }
 
 module.exports = {
@@ -69,4 +69,5 @@ module.exports = {
     getById,
     softDeleteById,
     restoreById,
+    deleteById
 }

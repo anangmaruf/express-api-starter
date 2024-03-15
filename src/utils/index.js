@@ -1,6 +1,6 @@
 const { db } = require("../config/database.config");
 const { hashToken } = require("./hashToken");
-const { setDataCache } = require("./cache");
+const { setDataCache, removeDataCache, getDataCache } = require("./cache");
 const {
   generateAccessToken,
   generateRefreshToken,
@@ -8,7 +8,8 @@ const {
 } = require("./jwt.user");
 const {
   checkIfExistWithStatus,
-  responseJson} = require("./helper");
+  responseJson,
+  responseJsonError} = require("./helper");
 
 module.exports = {
   db,
@@ -18,5 +19,8 @@ module.exports = {
   generateTokens,
   checkIfExistWithStatus,
   setDataCache,
-  responseJson
+  getDataCache,
+  removeDataCache,
+  responseJson,
+  responseJsonError
 };

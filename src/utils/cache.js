@@ -18,7 +18,15 @@ const getDataCache = async (key) => {
     return JSON.parse(cache);
 }
 
+/**
+ * Remove data cache
+ * params (key)
+ */
+const removeDataCache = async (key) => {
+    await redis.del(key);
+}
 module.exports = {
     setDataCache,
-    getDataCache
+    getDataCache,
+    removeDataCache
 }
